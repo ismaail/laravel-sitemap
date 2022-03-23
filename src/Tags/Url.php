@@ -4,6 +4,7 @@ namespace Spatie\Sitemap\Tags;
 
 use Carbon\Carbon;
 use DateTimeInterface;
+use Spatie\Sitemap\Tags\Image;
 
 class Url extends Tag
 {
@@ -26,9 +27,32 @@ class Url extends Tag
     /** @var \Spatie\Sitemap\Tags\Alternate[] */
     public array $alternates = [];
 
+    /** @var array */
+    public $images = [];
+
     public static function create(string $url): static
     {
         return new static($url);
+    }
+
+    /**
+     * @param $tag
+     * @param callable $callback
+     * @return self
+     */
+    public function addImage($tag, callable $callback = null): self
+    {
+        if (is_string($tag)) {
+            $tag = Image::create($tag);
+        }
+
+        if (! is_null($callback)) {
+            tap($tag, $callback);
+        }
+
+        $this->images[] = $tag;
+
+        return $this;
     }
 
     public function __construct(string $url)
